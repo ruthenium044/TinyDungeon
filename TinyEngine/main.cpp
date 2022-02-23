@@ -1,17 +1,22 @@
 #include "TinyEngine.h"
 #include "Grid.h"
 #include "Player.h"
+#include "UI.h"
 
 int main()
 {
 	// Initialize the engine and open up a window
 	engInit();
 
-	Grid grid{49, 6, 10, 10};
-	Player player{ grid.tileSizeX, 70, 70 };
+	Grid grid{};
+	Player player{};
+	UI ui{};
 
 	bool running = true;
 	int inputX, inputY;
+
+	int timerInitial = 600;
+	int timer = timerInitial;
 
 	while (running)
 	{
@@ -25,16 +30,25 @@ int main()
 		inputX = player.playerX;
 		inputY = player.playerY;
 		player.Input(inputX, inputY);
-		player.Perform(grid);
+		player.Perform(grid, inputX, inputY);
 
-		//regenerate map
-		if (engGetKeyDown(Key::Space))
+		if (player.energy <= 0)
 		{
-			grid.GenerateMap();
+			if (timer <= 0)
+			{
+				grid.GenerateMap();
+				player.Restart();
+				timer = timerInitial;
+			}
+			else
+			{
+				timer -= engDelta();
+			}
 		}
 		
 		grid.DrawMap();
 		player.Draw();
+		ui.Draw(player.energy, player.gold);
 	}
 	
 	// Don't quit right away

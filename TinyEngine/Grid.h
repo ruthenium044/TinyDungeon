@@ -23,13 +23,11 @@ public:
 	int tileSizeY;
 
 	Grid();
-	Grid(int randomFill, int life, int sizeX, int sizeY);
 	~Grid();
 
 	void RandomFill();
+	void RandomFillValue(int layerValue, int tileValue, int fillValue);
 	void SmoothMap();
-	void FloodFill(int x, int y, BoolArr2D& visited, std::vector<Coords>& cave);
-	void ClearSmallCaves();
 
 	void GenerateMap();
 	void DrawMap();

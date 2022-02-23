@@ -2,21 +2,10 @@
 
 Grid::Grid()
 {
-	this->randomFill = 49;
+	randomFill = 49;
 	lifeCycles = 7;
 	tileSizeX = 10;
 	tileSizeY = 10;
-
-	srand(time(NULL));
-	GenerateMap();
-}
-
-Grid::Grid(int randomFill, int life, int sizeX, int sizeY)
-{
-	this->randomFill = randomFill;
-	lifeCycles = life;
-	tileSizeX = sizeX;
-	tileSizeY = sizeY;
 
 	srand(time(NULL));
 	GenerateMap();
@@ -44,6 +33,20 @@ void Grid::RandomFill()
 	}
 }
 
+void Grid::RandomFillValue(int layerValue, int tileValue, int fillValue)
+{
+	for (int x = 0; x < width; x++)
+	{
+		for (int y = 0; y < height; y++)
+		{
+			if (grid[x][y] == layerValue)
+			{
+				grid[x][y] = (rand() % 100 + 1 < fillValue) ? tileValue : layerValue;
+			}
+		}
+	}
+}
+
 void Grid::SmoothMap()
 {
 	for (int x = 0; x < width; x++)
@@ -60,78 +63,6 @@ void Grid::SmoothMap()
 	}
 }
 
-void Grid::FloodFill(int x, int y, BoolArr2D& visited, std::vector<Coords>& cave)
-{
-	if (visited[x][y])
-	{
-		return;
-	}
-	visited[x][y] = true;
-
-	cave.push_back({ x, y });
-
-	Coords neighbours[4] = { {x + 1, y}, {x - 1, y}, {x, y + 1}, {x, y - 1} };
-	for (int i = 0; i < 4; i++)
-	{
-		if (neighbours[i].x == x && neighbours[i].y == y)
-		{
-			continue;
-		}
-
-		if (neighbours[i].x >= 0 && neighbours[i].y >= 0 &&
-			neighbours[i].x <= width && neighbours[i].y <= height)
-		{
-			if (grid[neighbours[i].x][neighbours[i].y] == 0)
-			{
-				FloodFill(neighbours[i].x, neighbours[i].y, visited, cave);
-			}
-		}
-	}
-}	
-
-void Grid::ClearSmallCaves()
-{
-	bool visited[width][height];
-
-	std::vector<std::vector<Coords>> caves;
-	std::vector<Coords> biggestCave;
-	int biggestIndex = 0;
-	int count = 0;
-
-	for (int x = 0; x < width; x++)
-	{
-		for (int y = 0; y < height; y++)
-		{
-			if (!visited[x][y])
-			{
-				std::vector<Coords> tempCave;
-				FloodFill(x, y, visited, tempCave);
-				caves.push_back(tempCave);
-				count++;
-			}
-
-			int currentIndex = count - 1;
-			std::vector<Coords> currentCave = caves[currentIndex];
-			if (count > 1)
-			{
-				if (currentCave.size() > biggestCave.size())
-				{
-					biggestIndex = currentIndex;
-					biggestCave = currentCave;
-				}
-				else
-				{
-					//grid[currentCave[currentIndex].x][currentCave[currentIndex].y] = 1;
-				}
-			}
-			else
-			{
-				biggestCave = currentCave;
-			}
-		}
-	}
-}
-
 void Grid::GenerateMap()
 {
 	RandomFill();
@@ -139,18 +70,30 @@ void Grid::GenerateMap()
 	{
 		SmoothMap();
 	}
-	//ClearSmallCaves();
+
+	RandomFillValue(0, 2, 5);
+	RandomFillValue(1, 3, 3);
 }
 
 void Grid::DrawMap()
 {
-	engSetColor(20, 20, 20);
 	for (int x = 0; x < width; x++)
 	{
 		for (int y = 0; y < height; y++)
 		{
 			if (grid[x][y] == 1)
 			{
+				engSetColor(20, 20, 20);
+				engDrawRect(x * tileSizeX, y * tileSizeY, tileSizeX, tileSizeY);
+			}
+			else if (grid[x][y] == 2)
+			{
+				engSetColor(100, 0, 0);
+				engDrawRect(x * tileSizeX, y * tileSizeY, tileSizeX, tileSizeY);
+			}
+			else if (grid[x][y] == 3)
+			{
+				engSetColor(80, 70, 0);
 				engDrawRect(x * tileSizeX, y * tileSizeY, tileSizeX, tileSizeY);
 			}
 		}
@@ -195,5 +138,5 @@ bool Grid::CheckBounds(int x, int y)
 {
 	x /= tileSizeX;
 	y /= tileSizeY;
-	return x > 0 && x < width&& y > 0 && y < height;
+	return x >= 0 && x < width && y >= 0 && y < height;
 }

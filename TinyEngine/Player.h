@@ -6,7 +6,6 @@ class Player
 {
 public:
 	Player();
-	Player(int speed, int x, int y);
 	~Player();
 
 	void Input(int& x, int& y);
@@ -17,12 +16,17 @@ public:
 	void Destroy(Grid& grid, int x, int y);
 	void Eat();
 	void Dig();
+	void DigGold();
+	void Restart();
 
 	int playerX;
 	int playerY;
-	int energy = 10;
+	int energy = 25;
+	int gold = 0;
 
 private:
 	int speed;
+	int startX;
+	int startY;
 };
 

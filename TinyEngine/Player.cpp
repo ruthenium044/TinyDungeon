@@ -4,14 +4,9 @@ Player::Player()
 {
 	playerX = 70;
 	playerY = 70;
+	startX = playerX;
+	startY = playerY;
 	this->speed = 10;
-}
-
-Player::Player(int speed, int x, int y)
-{
-	playerX = x;
-	playerY = y;
-	this->speed = speed;
 }
 
 Player::~Player()
@@ -46,7 +41,7 @@ void Player::Draw()
 
 void Player::Perform(Grid &grid, int x, int y)
 {
-	if (grid.CheckBounds(x, y))
+	if (grid.CheckBounds(x, y) && energy >	 0)
 	{
 		if (grid.GetTile(x, y) == 0)
 		{
@@ -57,11 +52,16 @@ void Player::Perform(Grid &grid, int x, int y)
 			Destroy(grid, x, y);
 			Dig();
 		}
-		else if (grid.GetTile(x, y) == 1)
+		else if (grid.GetTile(x, y) == 2)
 		{
 			Move(x, y);
 			Destroy(grid, x, y);
 			Eat();
+		}
+		else if (grid.GetTile(x, y) == 3)
+		{
+			Destroy(grid, x, y);
+			DigGold();
 		}
 	}
 }
@@ -79,10 +79,25 @@ void Player::Destroy(Grid &grid, int x, int y)
 
 void Player::Eat()
 {
-	energy++;
+	energy += 10;
 }
 
 void Player::Dig()
 {
 	energy--;
 }
+
+void Player::DigGold()
+{
+	energy -= 2;
+	gold++;
+}
+
+void Player::Restart()
+{
+	playerX = startX;
+	playerY = startY;
+	gold = 0;
+	energy = 25;
+}
+
