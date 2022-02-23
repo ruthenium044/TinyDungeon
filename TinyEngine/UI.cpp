@@ -17,4 +17,8 @@ void UI::Draw(int value, int value2)
 	{
 		engDrawStringFormat(100, 20, "Ya dead");
 	}
+	if (value2 >= 10)
+	{
+		engDrawStringFormat(100, 20, "Ya win");
+	}
 }

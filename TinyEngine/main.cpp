@@ -32,7 +32,7 @@ int main()
 		player.Input(inputX, inputY);
 		player.Perform(grid, inputX, inputY);
 
-		if (player.energy <= 0)
+		if (player.energy <= 0 || player.gold >= 10)
 		{
 			if (timer <= 0)
 			{
@@ -50,9 +50,6 @@ int main()
 		player.Draw();
 		ui.Draw(player.energy, player.gold);
 	}
-	
-	// Don't quit right away
-	//engWaitKey();
 
 	// Make a clean exit
 	engDestroy();

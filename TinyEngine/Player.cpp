@@ -6,7 +6,7 @@ Player::Player()
 	playerY = 70;
 	startX = playerX;
 	startY = playerY;
-	this->speed = 10;
+	speed = 10;
 }
 
 Player::~Player()
